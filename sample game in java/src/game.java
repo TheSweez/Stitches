@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class game {
 
   // Global
-  public static int currentLocale = 0;  // Player starts in Palace
+  public static int currentLocale = 0;  // Player starts in Dingus
   public static String command;
   public static boolean stillPlaying = true;
          
@@ -31,9 +31,9 @@ public class game {
      String msg = new String();
      msg = "";
      switch (currentLocale) {
-        case 0: msg = "Palace";
+        case 0: msg = "Dingus";
                 break;
-        case 1: msg = "The Abyss";
+        case 1: msg = "Karamja";
                 break;
         case 2: msg = "Elmo's World";
                 break;
