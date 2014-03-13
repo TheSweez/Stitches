@@ -276,7 +276,7 @@ public class Game {
         
         Locale loc9 = new Locale(9);
         loc9.setName("Medical Supply Room");
-        loc9.setDesc("There has to be something important in here, but how to access it?");
+        loc9.setDesc("The door is locked, but you can see a key ring inside.");
         loc9.setNav("North:N/A, South:Available, East:Available, West:Available");
         
         Locale loc10 = new Locale(10);
@@ -415,7 +415,7 @@ public class Game {
         } else if ( command.equalsIgnoreCase("inventory") || command.equalsIgnoreCase("i")) {
         	bag();
         } else if ( command.equalsIgnoreCase("leave") || command.equalsIgnoreCase("l")) {
-        	if (currentLocale == 2 && bag[4].itemFound()){
+        	if ((currentLocale == 2 || currentLocale==6) && bag[4].itemFound()){
         		System.out.println("You thrust open the door to finally taste the fresh,");
         		System.out.println("outdoor air. Looking around, you search to find someone");
         		System.out.println("to explain the strange, empty hospital.");
@@ -428,11 +428,21 @@ public class Game {
         		System.out.println("*Shadowy voice*: YOU CANNOT LEAVE PUNY HUMAN!!"+"\n");
         	}
     	} else if ( command.equalsIgnoreCase("shit")) {
-        	System.out.println("This kind of language is not doing to get you anywhere!" + "\n");
+        	System.out.println("This kind of language is not going to get you anywhere!" + "\n");
         } else if ( command.equalsIgnoreCase("fuck")) {
         	System.out.println("You can't do that here." + "\n");
         } else if ( command.equalsIgnoreCase("poop")) {
         	System.out.println("You stop what you are doing, drop your pants and take a duce." + "\n");
+        } else if ( command.equalsIgnoreCase("unlock") || command.equalsIgnoreCase("u")){
+        	if(bag[3].itemFound() && currentLocale==9){
+        		locations[currentLocale].setDesc("You unlock the door and see a key ring on the shelf.");
+        	} else if (bag[4].itemFound() && (currentLocale==2 || currentLocale==6)){
+        		locations[currentLocale].setDesc("You unlock the door! Now it is time to leave.");
+        	} else if (currentLocale==0 || currentLocale==1 || currentLocale==3 || currentLocale==4 || currentLocale==5 || currentLocale==10 || currentLocale==8 || currentLocale==7){
+        		System.out.println("There is no need to unlock anything here."+"\n");
+        	}else {
+        		System.out.println("You don't have the correct key for this door."+"\n");
+        	}
         }else {//if you input an invalid text command you get this error message.
         	System.out.println("Error: Invalid text command");
         	System.out.println("The valid commands are as follows:");
@@ -443,6 +453,7 @@ public class Game {
             System.out.println("West = w/west");
             System.out.println("Take Item = t/take");
             System.out.println("Check Inventory = i/inventory");
+            System.out.println("Unlock door = u/unlock");
             System.out.println("Open Map = m/map");
             System.out.println("Open Shop = os/shop");
             System.out.println("Leave building = l/leave");
@@ -479,6 +490,8 @@ public class Game {
         System.out.println("West = w/west");
         System.out.println("Take Item = t/take");
         System.out.println("Check Inventory = i/inventory");
+        System.out.println("Leave building = l/leave");
+        System.out.println("Unlock door = u/unlock");
         System.out.println("Open Map = m/map");
         System.out.println("Open Shop = os/shop");
         System.out.println("Quit = q/quit"+"\n");
@@ -537,9 +550,7 @@ public class Game {
     	case 9:
     		if (bag[3].itemFound()){
     			bag[4].setFound(true);
-    			locations[currentLocale].setDesc("What can you find in here?");
-    		} else{
-    			System.out.println("The door is locked");
+    			locations[currentLocale].setDesc("You took the Master key from here.");
     		}
     		
     	break;
