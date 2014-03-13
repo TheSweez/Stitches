@@ -84,7 +84,7 @@ public class Game {
     		if (currentLocale==0){
 		    	System.out.println("The '*' indicates your current location");
 		    	map0=    " ____________________________________________________________________________________________________________                 \n"+
-		    			"|Recovey Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                             |        N       \n"+
+		    			"|Recovery Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
 		    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
 		    			"|      |                     |                       |                |         |                     |      |        |       \n"+
 		    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
