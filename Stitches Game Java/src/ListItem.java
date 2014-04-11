@@ -3,12 +3,9 @@ public class ListItem {
     //
     // Public
     //
-
-    // Constructor
-    public ListItem(){
+    public ListItem() {
     }
 
-    // Getters and Setters
     public String getName() {
         return name;
     }
@@ -23,6 +20,13 @@ public class ListItem {
         this.desc = desc;
     }
 
+    public int getCost() {
+        return cost;
+    }
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
     public ListItem getNext() {
         return next;
     }
@@ -30,18 +34,18 @@ public class ListItem {
         this.next = next;
     }
 
-    // Other methods
     @Override
     public String toString() {
-        return " name=" + this.name + " desc=" + this.desc;
+        return "[ListItem name=" + this.name
+                + " desc=" + this.desc
+                + " cost=" + this.cost + "]";
     }
-
 
     //
     // Private
     //
     private String name;
     private String desc;
+    private int cost;
     private ListItem next = null;
-
 }

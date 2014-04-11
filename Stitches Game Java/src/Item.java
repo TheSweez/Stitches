@@ -8,8 +8,10 @@ public class Item {
 	private String desc; //Item description
 	private boolean found = false; //Player hasn't taken item yet when false.
 
-	public Item() {
-		this.id=0;
+	public Item(int num, String name2, boolean b) {
+		id = num;
+		name = name2;
+		b = false;
 	}
 	public Item(int id){
 		this.id=id;
@@ -32,7 +34,7 @@ public class Item {
 	public void setFound(boolean found){
 		this.found = found;
 	}
-	public String toString(){
+		public String toString(){
 		return "name: "+ this.name +" desc: "+ this.desc;
 	}
 }

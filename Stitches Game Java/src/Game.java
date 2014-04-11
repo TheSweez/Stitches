@@ -1,7 +1,15 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.ArrayList;
 //Dan Swezey
 //Software Development One: CMPT220L-111
-//Project 2 "STITCHES"
+//"Stitches"
+
+//THIS DONE NOT HAVE LINKING OBJECTS FOR NAVIGATION. I am still trying to figure it out.
+//I will print this code as is without the linking objects, but when i submit it online it'll have the linking objects for navigation.
+
+import java.util.Random;
 public class Game {
 
     //
@@ -9,12 +17,10 @@ public class Game {
     //
 
     // Globals
-	private static final boolean DEBUGGING  = false; // Debugging flag.
     private static final int MAX_LOCALES = 2;        // Total number of rooms/locations we have in the game.
-    private static int currentLocale = 0;            // Player starts in locale 0.
+    private static Locale currentLocale = null;            // Player starts in locale 0.
     private static String command;                   // What the player types as he or she plays the game.
     private static boolean stillPlaying = true;      // Controls the game loop.
-    private static Locale[] locations;               // An uninitialized array of type Locale. See init() for initialization.
     private static int[][]  nav;                     // An uninitialized array of type int int.
     private static double moves = 0;                 // Counter of the player's moves.
     private static double score = 0;                 // Tracker of the player's score.
@@ -32,35 +38,22 @@ public class Game {
     private static String map8 = ""; 
     private static String map9 = ""; 
     private static String map10 = ""; 
-    private static int key = 0;                      //This is to make sure you cant leave unless you have they appropriate keys
+    private static int key = 0;                      //This is to make sure you cant leave unless you have the appropriate keys
+    private static Currency money = new Currency( "cash"); 
+    private static Random coins = new Random();
+    private static ListMan magicItems  = new ListMan();
+    private static ListItem purchase = new ListItem();
+    private static Scanner transactionDone = new Scanner(System.in);
+    public static int num = 9999;
+    static ArrayList<String> newBag = new ArrayList<String>();
+    private static boolean unlock = false;
+    private static boolean unlock1 = false;
+    
 
+    
+    
     public static void main(String[] args) {
-        if (DEBUGGING) {
-            // Display the command line args.
-            System.out.println("Starting with args:");
-            for (int i = 0; i < args.length; i++) {
-                System.out.println(i + ":" + args[i]);
-            }
-        }
-
-        // Set starting locale, if it was provided as a command line parameter.
-        if (args.length > 0) {
-            try {
-                int startLocation = Integer.parseInt(args[0]);
-                // Check that the passed-in value for startLocation is within the range of actual locations.
-                if ( startLocation >= 0 && startLocation <= MAX_LOCALES) {
-                    currentLocale = startLocation;
-                } else {
-                    System.out.println("WARNING: passed-in starting location (" + args[0] + ") is out of range.");
-                }
-            } catch(NumberFormatException ex) {
-                System.out.println("WARNING: Invalid command line arg: " + args[0]);
-                if (DEBUGGING) {
-                    System.out.println(ex.toString());
-                }
-            }
-        }
-
+        
         // Get the game started.
         init();
         updateDisplay();
@@ -81,133 +74,133 @@ public class Game {
     //
     private static void mapAscii(){//player map with individual locations indicated
     	if(bag[0].itemFound()){
-    		if (currentLocale==0){
+    		if (currentLocale.getId()==0){
 		    	System.out.println("The '*' indicates your current location");
 		    	map0=    " ____________________________________________________________________________________________________________                 \n"+
 		    			"|Recovery Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-		    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+		    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
 		    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-		    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+		    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
 		    			"|*Operation Room A --- Operation Room B -------------|---------Waiting Room --- Bathroom --- Janitor's Closet|        |       \n"+
 		    			"|                                                    |                                                       |        v       \n"+
 		    			"|                                                Entrance                                                    |        S       \n"+
 		    			"|____________________________________________________________________________________________________________|                  ";
 		    	System.out.println(map0);
-    		}else if (currentLocale==1){
+    		}else if (currentLocale.getId()==1){
 		    	System.out.println("The '*' indicates your current location");
 		    	map1=   " ____________________________________________________________________________________________________________                 \n"+
 		    			"|Recovery Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-		    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+		    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
 		    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-		    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+		    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
 		    			"|Operation Room A --- *Operation Room B -------------|---------Waiting Room --- Bathroom --- Janitor's Closet|        |       \n"+
 		    			"|                                                    |                                                       |        v       \n"+
 		    			"|                                                Entrance                                                    |        S       \n"+
 		    			"|____________________________________________________________________________________________________________|                  ";
 		    	System.out.println(map1);
-    		}else if (currentLocale==2){
+    		}else if (currentLocale.getId()==2){
     			System.out.println("The '*' indicates your current location");
     	    	map2=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|Recovery Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|---------Waiting Room --- Bathroom --- Janitor's Closet|        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                *Entrance                                                   |        S       \n"+
     	    			"|____________________________________________________________________________________________________________|                  ";
     	    	System.out.println(map2);
-    		}else if (currentLocale==3){
+    		}else if (currentLocale.getId()==3){
     			System.out.println("The '*' indicates your current location");
     	    	map3=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|Recovery Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|--------*Waiting Room --- Bathroom --- Janitor's Closet|        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                Entrance                                                    |        S       \n"+
     	    			"|____________________________________________________________________________________________________________|                  ";
     	    	System.out.println(map3);
-    		}else if (currentLocale==4){
+    		}else if (currentLocale.getId()==4){
     			System.out.println("The '*' indicates your current location");
     	    	map4=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|Recovery Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|--------Waiting Room --- *Bathroom --- Janitor's Closet|        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                Entrance                                                    |        S       \n"+
     	    			"|____________________________________________________________________________________________________________|                  ";
     	    	System.out.println(map4);
-    		}else if (currentLocale==5){
+    		}else if (currentLocale.getId()==5){
     			System.out.println("The '*' indicates your current location");
     	    	map5=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|Recovery Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|--------Waiting Room --- Bathroom --- *Janitor's Closet|        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                Entrance                                                    |        S       \n"+
     	    			"|____________________________________________________________________________________________________________|                  ";
     	    	System.out.println(map5);
-    		}else if (currentLocale==6){
+    		}else if (currentLocale.getId()==6){
     			System.out.println("The '*' indicates your current location");
     	    	map6=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|Recovery Room A ----- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |            *Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^            *Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|--------Waiting Room --- Bathroom --- Janitor's Closet |        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                Entrance                                                    |        S       \n"+
     	    			"|____________________________________________________________________________________________________________|                  ";
     	    	System.out.println(map6);
-    		}else if (currentLocale==7){
+    		}else if (currentLocale.getId()==7){
     			System.out.println("The '*' indicates your current location");
     	    	map7=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|*Recovery Room A ---- Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|---------Waiting Room --- Bathroom --- Janitor's Closet|        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                Entrance                                                    |        S       \n"+
     	    			"|____________________________________________________________________________________________________________|                  ";
     	    	System.out.println(map7);
-    		}else if (currentLocale==8){
+    		}else if (currentLocale.getId()==8){
     			System.out.println("The '*' indicates your current location");
     	    	map8=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|Recovery Room A ---- *Recovery Room B ----- Medical Supply Room ------ Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|---------Waiting Room --- Bathroom --- Janitor's Closet|        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                Entrance                                                    |        S       \n"+
     	    			"|____________________________________________________________________________________________________________|                  ";
     	    	System.out.println(map8);
-    		}else if (currentLocale==9){
+    		}else if (currentLocale.getId()==9){
     			System.out.println("The '*' indicates your current location");
     	    	map9=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|Recovery Room A ---- Recovery Room B ----- *Medical Supply Room ------ Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|---------Waiting Room --- Bathroom --- Janitor's Closet|        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                Entrance                                                    |        S       \n"+
     	    			"|____________________________________________________________________________________________________________|                  ";
     	    	System.out.println(map9);
-    		}else if (currentLocale==10){
+    		}else if (currentLocale.getId()==10){
     			System.out.println("The '*' indicates your current location");
     	    	map10=   " ____________________________________________________________________________________________________________                 \n"+
     	    			"|Recovery Room A ---- Recovery Room B ----- Medical Supply Room ------ *Cafeteria                            |        N       \n"+
-    	    			"|      |                     |                       |                |         |             Emergency Exit |        ^       \n"+
+    	    			"|      |                     |                       |                ^         ^             Emergency Exit |        ^       \n"+
     	    			"|      |                     |                       |                |         |                     |      |        |       \n"+
-    	    			"|      |                     |                       |                |         |                     |      |  W <---+---> E \n"+
+    	    			"|      |                     |                       |                v         |                     |      |  W <---+---> E \n"+
     	    			"|Operation Room A --- Operation Room B --------------|---------Waiting Room --- Bathroom --- Janitor's Closet|        |       \n"+
     	    			"|                                                    |                                                       |        v       \n"+
     	    			"|                                                Entrance                                                    |        S       \n"+
@@ -254,7 +247,7 @@ public class Game {
         
         Locale loc5 = new Locale(5);
         loc5.setName("Janitor's Closet");//"Magick Shoppe"
-        loc5.setDesc("No way there is a key in here!");
+        loc5.setDesc("I wonder what is in here. And it smells like old man in here...");
         loc5.setNav("North:Available, South:N/A, East:N/A, West:Available");
         
         Locale loc6 = new Locale(6);
@@ -283,21 +276,6 @@ public class Game {
         loc10.setName("Cafeteria");
         loc10.setDesc("What a mess");
         loc10.setNav("North:N/A, South:Available, East:N/A, West:Available");
-
-        // Set up the location array.
-        locations = new Locale[11];
-        locations[0] = loc0; // "Operation Room A";
-        locations[1] = loc1; // "Operation Room B";  
-        locations[2] = loc2; // "Entrance";           
-        locations[3] = loc3; // "Waiting Room";
-        locations[4] = loc4; // "Bathroom";
-        locations[5] = loc5; // "Janitor's Closet/Shop";
-        locations[6] = loc6; // "Emergency Exit";
-        locations[7] = loc7; // "Recovery Room A";
-        locations[8] = loc8; // "Recovery Room B";
-        locations[9] = loc9; // "Medical Supply Room";
-        locations[10] = loc10; // "Cafeteria";
-        
         
         // Item array
         Item item0 = new Item(0);
@@ -327,34 +305,69 @@ public class Game {
         bag[3] = item3;
         bag[4] = item4;
 
-        if (DEBUGGING) {
-            System.out.println("All game locations:");
-            for (int i = 0; i < locations.length; ++i) {
-                System.out.println(i + ":" + locations[i].toString());
-            }
-        }
-        // Set up the navigation matrix.
-        nav = new int[][] {
-                                /* N   S   E   W */
-                                /* 0   1   2   3 */
-        	 /*loc0 for map 0*/  { 7 ,-1 , 1 ,-1},
-       		 /*loc1 for map 1*/  { 8 ,-1 , 2 , 0},
-       		 /*loc2 for map 2*/  { 9 ,-1 , 3 , 1},
-       		 /*loc3 for map 3*/  { 10,-1 , 4 , 2},
-       		 /*loc4 for map 4*/  { 10,-1 , 5 , 3},
-       		 /*loc5 for map 5*/  { 6 ,-1 ,-1 , 4},
-       		 /*loc6 for map 6*/  {-1 , 5 ,-1 ,10},
-       		 /*loc7 for map 7*/  {-1 , 0 , 8 ,-1},
-       		 /*loc8 for map 8*/  {-1 , 1 , 9 , 7},
-       		 /*loc9 for map 9*/  {-1 , 2 , 10, 8},
-       		 /*loc10 for map 10*/ {-1 , 3 ,-1 , 9}
-        };
+        // Linking up the Locales5
+        loc0.setNorth(loc7);
+        loc0.setSouth(null);
+        loc0.setEast(loc1);
+        loc0.setWest(null);
+        
+        loc1.setNorth(loc8);
+        loc1.setSouth(null);
+        loc1.setEast(loc2);
+        loc1.setWest(loc0);
+        
+        loc2.setNorth(loc9);
+        loc2.setSouth(null);
+        loc2.setEast(loc3);
+        loc2.setWest(loc1);
+        
+        loc3.setNorth(loc10);
+        loc3.setSouth(null);
+        loc3.setEast(loc4);
+        loc3.setWest(loc2);
+        
+        loc4.setNorth(loc10);
+        loc4.setSouth(null);
+        loc4.setEast(loc5);
+        loc4.setWest(loc3);
+        
+        loc5.setNorth(loc6);
+        loc5.setSouth(null);
+        loc5.setEast(null);
+        loc5.setWest(loc4);
+        
+        loc6.setNorth(null);
+        loc6.setSouth(loc5);
+        loc6.setEast(null);
+        loc6.setWest(null);
+        
+        loc7.setNorth(null);
+        loc7.setSouth(loc0);
+        loc7.setEast(loc8);
+        loc7.setWest(null);
+        
+        loc8.setNorth(null);
+        loc8.setSouth(loc1);
+        loc8.setEast(loc9);
+        loc8.setWest(loc7);
+        
+        loc9.setNorth(null);
+        loc9.setSouth(loc2);
+        loc9.setEast(loc10);
+        loc9.setWest(loc8);
+        
+        loc10.setNorth(null);
+        loc10.setSouth(loc3);
+        loc10.setEast(null);
+        loc10.setWest(loc9);
+     
 
        System.out.println("---STICHES---" + "\n\n" + "It's cold and dark." + "\n" +"You look around you quickly" + "\n" +"The room wreaks of isolation and abandonment." + "\n" +"You find yourself on an operating table" + "\n" +"with several rusty tools" + "\n" +"scattered across the adjacent table." + "\n" +"Desperately, you call out a bold 'hello?'," + "\n" +"but there is no response." + "\n" +"You know what this means." + "\n" +"There is nobody here." + "\n" +"And there hasn't been anybody here" + "\n" +"in a very long time." + "\n" +"You must get out...and fast!" + "\n" +"You are now in" + "\n");
+       currentLocale=loc0;
     }
 
     private static void updateDisplay() {
-        System.out.println(locations[currentLocale].getText());
+        System.out.println(currentLocale.getText());
     }
 
     private static void getCommand() {
@@ -362,44 +375,72 @@ public class Game {
     		achievement = score/moves;
     		//makes the achievement ratio rounded to the nearest two decimal places for neatness
     		long l = (int)Math.round(achievement * 100);  
-    		achievement = l / 100.0;
+    		achievement = score/moves;
+    		score = score + 5;
         	
         }
     
-        System.out.print("[" + moves + " moves, score " + score + ", achievement ratio " + achievement + "] " + "\n");
+        System.out.print("[" + moves + " moves, score " + score +"," + " Money "+ money.getAmount()+","+" achievement ratio " + achievement + "] " + "\n");
         
         Scanner inputReader = new Scanner(System.in);
         command = inputReader.nextLine();  // command is global.
     }
 
-    private static void navigate() {
-        final int INVALID = -1;
-        int dir = INVALID;  // This will get set to a value > 0 if a direction command was entered.
-
-        if (        command.equalsIgnoreCase("north") || command.equalsIgnoreCase("n") ) {
-            dir = 0;
+    private static void navigate() { //TODO: Make this use Linked List Navigation
+        int INVALID=-1;
+        Locale newLocation=new Locale();
+        newLocation=currentLocale;
+        
+        
+        if (command.equalsIgnoreCase("north") || command.equalsIgnoreCase("n") ) {
+        	if(currentLocale.getNorth()!=null){
+                currentLocale = currentLocale.getNorth();
+                moves+=1;
+                money.add(coins.nextInt(16));
+                
+            }else{
+                System.out.println("You can't go that way");
+            }
         } else if ( command.equalsIgnoreCase("south") || command.equalsIgnoreCase("s") ) {
-            dir = 1;
+        	if(currentLocale.getSouth()!=null){
+                currentLocale = currentLocale.getSouth();
+                moves+=1;
+                money.add(coins.nextInt(16));
+            }else{
+                System.out.println("You can't go that way");
+            }
         } else if ( command.equalsIgnoreCase("east")  || command.equalsIgnoreCase("e") ) {
-            dir = 2;
+        	if(currentLocale.getEast()!=null){
+                currentLocale = currentLocale.getEast();
+                moves+=1;
+                money.add(coins.nextInt(16));
+            }else{
+                System.out.println("You can't go that way");
+            }
         } else if ( command.equalsIgnoreCase("west")  || command.equalsIgnoreCase("w") ) {
-            dir = 3;
-
+        	if(currentLocale.getWest()!=null){
+                currentLocale = currentLocale.getWest();
+                moves+=1;
+                money.add(coins.nextInt(16));
+            }else{
+                System.out.println("You can't go that way");
+            }
+        	
         } else if ( command.equalsIgnoreCase("quit")  || command.equalsIgnoreCase("q")) {
             quit();
         } else if ( command.equalsIgnoreCase("help")  || command.equalsIgnoreCase("h")) {
             help();
         } else if ( command.equalsIgnoreCase("shop")  || command.equalsIgnoreCase("os")) {
-        	//this is where the magick shoppe is. the first time you open the shop there is a dialogue.
+        	//this is where the magic shop is. the first time you open the shop there is a dialogue.
         	//every other time you open the shop there is the same dialogue each time thats different from the first time.
-        	if (currentLocale == 5){
+        	if (currentLocale.getId()==5){
         		janitor++;
         		if (janitor == 1){
-        			System.out.println("Strange voice: Well howdy! I can hardly believe my eyes." + "\n" +"Strange voice: Not every day you see another critter" + "\n" +"Strange voice: strolling around this here place! " + "\n" +"Strange voice: My name's Old Craig." + "\n" +"You: How long have you been here?!" + "\n" +"You: How are you still alive?" + "\n" +"Old Craig: About 62 years, it's been! " + "\n" +"Old Craig: Got everything I need to survive in this here closet." + "\n" +"Old Craig: I got some stuff here if y'all need anythang!" + "\n" +"You: Well thanks for that I'll keep it in mind" + "\n");
+        			ShopSetup(magicItems);
         		}else if (janitor >= 2){
-        			System.out.println("Old Craig: Welcome back! Looking for something?" + "\n");
+        			ShopBuy();
         		}
-        		createMagicItems();
+        		
         	}else{
         		if (janitor == 0){
         			System.out.println("*This is no place for a shop... ya dingus!!*" + "\n");
@@ -415,7 +456,7 @@ public class Game {
         } else if ( command.equalsIgnoreCase("inventory") || command.equalsIgnoreCase("i")) {
         	bag();
         } else if ( command.equalsIgnoreCase("leave") || command.equalsIgnoreCase("l")) {
-        	if ((currentLocale == 2 || currentLocale==6) && bag[4].itemFound()){
+        	if (((currentLocale.getId() == 2 || currentLocale.getId()==6)) && unlock1 == true){
         		System.out.println("You thrust open the door to finally taste the fresh,");
         		System.out.println("outdoor air. Looking around, you search to find someone");
         		System.out.println("to explain the strange, empty hospital.");
@@ -434,54 +475,26 @@ public class Game {
         } else if ( command.equalsIgnoreCase("poop")) {
         	System.out.println("You stop what you are doing, drop your pants and take a duce." + "\n");
         } else if ( command.equalsIgnoreCase("unlock") || command.equalsIgnoreCase("u")){
-        	if(bag[3].itemFound() && currentLocale==9){
-        		locations[currentLocale].setDesc("You unlock the door and see a key ring on the shelf.");
-        	} else if (bag[4].itemFound() && (currentLocale==2 || currentLocale==6)){
-        		locations[currentLocale].setDesc("You unlock the door! Now it is time to leave.");
-        	} else if (currentLocale==0 || currentLocale==1 || currentLocale==3 || currentLocale==4 || currentLocale==5 || currentLocale==10 || currentLocale==8 || currentLocale==7){
-        		System.out.println("There is no need to unlock anything here."+"\n");
-        	}else {
-        		System.out.println("You don't have the correct key for this door."+"\n");
-        	}
+        	unlock();
         }else {//if you input an invalid text command you get this error message.
         	System.out.println("Error: Invalid text command");
-        	System.out.println("The valid commands are as follows:");
-            System.out.println("Help = h/help");
-            System.out.println("North = n/north");
-            System.out.println("South = s/south");
-            System.out.println("East = e/east");
-            System.out.println("West = w/west");
-            System.out.println("Take Item = t/take");
-            System.out.println("Check Inventory = i/inventory");
-            System.out.println("Unlock door = u/unlock");
-            System.out.println("Open Map = m/map");
-            System.out.println("Open Shop = os/shop");
-            System.out.println("Leave building = l/leave");
-            System.out.println("Quit = q/quit");
+        	System.out.println("To see a list of commands enter: help");
         }
-
-        
-        
-        
-        if (dir > -1) {   // This means a dir was set.
-            int newLocation = nav[currentLocale][dir];
-            if (newLocation == INVALID) {
-                System.out.println("You cannot go that way."+ "\n");
-            } else {
-                currentLocale = newLocation;
-                moves = moves + 1;
-                if (locations[currentLocale].getHasVisited()==true){
-                	
-                }else{
-                	locations[currentLocale].setHasVisited(true);
-                	score = score + 5;
-                }
-                
-            }
-        }
+        if(currentLocale.getHasVisited()==true){
+          	
+          	
+          }
+          else{
+          	currentLocale.setHasVisited(true);
+          	score=score+5;
+          	
+          } 
+    
     }
 
-    private static void help() {
+   
+
+	private static void help() {
         System.out.println("The commands are as follows:");
         System.out.println("Help = h/help");
         System.out.println("North = n/north");
@@ -500,85 +513,149 @@ public class Game {
     private static void quit() {
         stillPlaying = false;
     }
-
-    private static void createMagicItems() {
-        // Create the list manager for our magic items.
-        List0 magicItems  = new List0();
-        magicItems.setName("Closet Items");
-        magicItems.setDesc("These are the miscellaneouse items.");
-        magicItems.setHead(null);
-
-        // Create some magic items and put them in the list.
-        ListItem i1 = new ListItem();
-        i1.setName(" Duck tape");
-        i1.setDesc(" $1");
-
-        ListItem i2 = new ListItem();
-        i2.setName(" Broom");
-        i2.setDesc(" $0.50");
-
-        ListItem i3 = new ListItem();
-        i3.setName(" Mop");
-        i3.setDesc(" $0.50");
-
-        // Link it all up.
-        magicItems.setHead(i1);
-        i1.setNext(i2);
-        i2.setNext(i3);
-        i3.setNext(null);
-
-        System.out.println(magicItems.toString());
-    }
     private static void Take(){
-    	switch(currentLocale){
-    	case 0:
+    	if (currentLocale.getId() == 0){
     		bag[0].setFound(true);
-    		locations[currentLocale].setDesc("This is where you woke up");
-    	break;
-    	case 1:
+    		newBag.add(bag[0].getName());
+    		System.out.println("You found " + bag[0].getName() + ", it is in your bag.");
+    	}
+    	if (currentLocale.getId() == 1){
     		bag[1].setFound(true);
-    		locations[currentLocale].setDesc("Where are all the doctors?");
-    	break;
-    	case 4:
+    		newBag.add(bag[1].getName());
+    		System.out.println("You found " + bag[1].getName() + ", it is in your bag.");
+    	}
+    	if (currentLocale.getId() == 4){
     		bag[2].setFound(true);
-    		locations[currentLocale].setDesc("Smells horrific");
-    	break;
-    	case 5:
+    		newBag.add(bag[2].getName());
+    		System.out.println("You found " + bag[2].getName() + ", it is in your bag.");
+    	}
+    	if (currentLocale.getId() == 5){
     		bag[3].setFound(true);
-    		locations[currentLocale].setDesc("This place has a bizarre ambiance");
-    	break;
-    	case 9:
-    		if (bag[3].itemFound()){
-    			bag[4].setFound(true);
-    			locations[currentLocale].setDesc("You took the Master key from here.");
+    		newBag.add(bag[3].getName());
+    		bag[3].setFound(true);
+    		System.out.println("You found " + bag[3].getName() + ", it is in your bag.");
+    	}
+    	if (currentLocale.getId() == 9 && unlock == true){
+    		bag[4].setFound(true);
+    		newBag.add(bag[4].getName());
+    		System.out.println("You found " + bag[4].getName() + ", it is in your bag.");
+    	}
+    }
+    private static void unlock() {
+    	if(bag[3].itemFound() && currentLocale.getId()==9){
+    		currentLocale.setDesc("You unlock the door and see a key ring on the shelf.");
+    		unlock = true;
+    	} else if (bag[4].itemFound() && (currentLocale.getId()==2 || currentLocale.getId()==6)){
+    		currentLocale.setDesc("You unlock the door! Now it is time to leave.");
+    		unlock1 = true;
+    	} else if (currentLocale.getId()==0 || currentLocale.getId()==1 || currentLocale.getId()==3 || currentLocale.getId()==4 || currentLocale.getId()==5 || currentLocale.getId()==10 || currentLocale.getId()==8 || currentLocale.getId()==7){
+    		System.out.println("There is no need to unlock anything here."+"\n");
+    	}else {
+    		System.out.println("You don't have the correct key for this door."+"\n");
+    	}
+		
+	}
+  
+    private static void bag(){//inventory
+    	String inventory = "Inventory:";
+    	System.out.println(inventory + newBag);
+    }
+  
+    private static boolean sequentialSearch(ListMan magicItems2, String target) {
+
+    	System.out.println("Searching for " + target + ".");
+    	int counter = 0;
+    	ListItem currentItem = new ListItem();
+    	currentItem = magicItems2.getHead();
+    	boolean isFound = false;
+    	while ( (!isFound) && (currentItem != null) ) {
+    		counter = counter +1;
+    		if (currentItem.getName().equalsIgnoreCase(target)) {
+    			//We found it!
+    			isFound = true;
+    			
+    		} else {
+    			// Keep looking.
+    			currentItem = currentItem.getNext();
+    		}
+    	}
+    	if (isFound) {
+    		System.out.println("Here is the "+ target +" you asked for.");
+    		System.out.println("this will be "+ currentItem.getCost()+" dollars");
+    		System.out.println("Are you ready to purchase this item? Enter yes to buy or no to not buy.");
+    		String buy = transactionDone.nextLine();
+    		if(buy.equalsIgnoreCase("yes")&&money.getAmount()>=currentItem.getCost()){
+    			
+    			
+    		}else if (buy.equalsIgnoreCase("yes")&&money.getAmount()<currentItem.getCost()){
+    			System.out.println("Uhmmm... I'm sorry but I can't help you.");
+    			System.out.println("Either you didn't clearly say 'Yes' or 'No'");
+    			System.out.println("or you simply don'y have enough money.");
+    			return false;
     		}
     		
-    	break;
-    	default: 
-    		System.out.println("There is no item here to take."+"\n");
-    	break;
+    			if (buy.equalsIgnoreCase("Yes")) {
+    			purchase=currentItem;
+    			newBag.add(currentItem.getName());
+    			return true;
+    			
+    		}
+    		else if(buy.equalsIgnoreCase("No")){
+    			System.out.println("Goodbye :)");
+    			
+    		}
+    		
+    		
+    	} else {
+    		System.out.println("Sorry, I couldn't find " + target + " in my stock. \nCheck your inventory to see if you have already purchased the item. \nYou also could have asked for an item I don't have. \n");
+    		return false;
+}
+    	return false;
     	}
-   
-    	
-    }
-    private static void bag(){//inventory
-    	String inventory = "";
-    	if(bag[0].itemFound()){
-    		inventory = inventory + bag[0].toString()+"\n";
-    	}
-    	if(bag[1].itemFound()){
-    		inventory = inventory + bag[1].toString()+"\n";
-    	}
-    	if(bag[2].itemFound()){
-    		inventory = inventory + bag[2].toString()+"\n";
-    	}
-    	if(bag[3].itemFound()){
-    		inventory = inventory + bag[3].toString()+"\n";
-    	}
-    	if(bag[4].itemFound()){
-    		inventory = inventory + bag[4].toString()+"\n";
-    	}
-    	System.out.println(inventory);
-    }
+    
+    private static void readMagicItemsFromFile(String fileName,ListMan lm) {
+        File myFile = new File(fileName);
+        try {
+            Scanner input = new Scanner(myFile);
+            while (input.hasNext()) {
+                // Read a line from the file.
+                String itemName = input.nextLine();
 
+                // Construct a new list item and set its attributes.
+                ListItem fileItem = new ListItem();
+                fileItem.setName(itemName);
+                fileItem.setCost((int) (Math.random() * 100));
+                fileItem.setNext(null); // Still redundant. Still safe.
+
+                // Add the newly constructed item to the list.
+                lm.add(fileItem);
+            }
+            // Close the file.
+            input.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("File not found. " + ex.toString());
+        }
+    }
+    
+    private static void ShopSetup(ListMan lm){
+    	System.out.println("Strange voice: Well howdy! I can hardly believe my eyes." + "\n" +"Strange voice: Not every day you see another critter" + "\n" +"Strange voice: strolling around this here place! " + "\n" +"Strange voice: My name's Old Craig." + "\n" +"You: How long have you been here?!" + "\n" +"You: How are you still alive?" + "\n" +"Old Craig: About 62 years, it's been! " + "\n" +"Old Craig: Got everything I need to survive in this here closet." + "\n" +"Old Craig: I got some stuff here if y'all need anythang!" + "\n" +"Old Craig: Just open my shop whenever you are here." + "\n" +"You: Well thanks for that I'll keep it in mind" + "\n");
+    	readMagicItemsFromFile("magic_item_list.txt", lm);
+    	janitor = 1;
+    }
+    private static void ShopBuy(){
+    	System.out.println("Old Craig: Welcome back! Looking for something?" + "\n");
+    	String selection = transactionDone.nextLine();
+    	if (sequentialSearch(magicItems, selection) == true){
+    		money.subtract(purchase.getCost());
+    		Item anything = new Item(num, purchase.getName(), true);
+    		num++;
+    		bag=new Item[num];
+    		bag[num-1]=anything;
+    		System.out.println("Item bought");
+    	
+    	}
+    	}
+    
+    
+    
 }
