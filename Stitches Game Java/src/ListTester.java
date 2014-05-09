@@ -2,63 +2,46 @@ import java.io.*;
 import java.util.Scanner;
 
 public class ListTester {
-
-    public static void main(String[] args) {
-        System.out.println("List tester.");
-
-        // Make the list manager.
-        ListMan lm1 = new ListMan();
-        lm1.setName("Magic Items");
-        lm1.setDesc("These are some of my favorite things.");
-
-        // Make some list items.
-        ListItem item1 = new ListItem();
-        item1.setName("+2 ring");
-        item1.setDesc("precious");
-        item1.setCost((int) 42.2112);
-        item1.setNext(null);  // Redundant, but safe.
-
-        ListItem item2 = new ListItem();
-        item2.setName("Cloak of Doom");
-        item2.setDesc("Scary");
-        item2.setCost(666);
-        item2.setNext(null); // Still redundant. Still safe.
-
-        ListItem item3 = new ListItem();
-        item3.setName("broad sword");
-        item3.setDesc("sharp");
-        item3.setCost(12);
-        item3.setNext(null); // Still redundant. Still safe.
-
-        // Put items in the list.
-        lm1.add(item1);
-        lm1.add(item2);
-        lm1.add(item3);
-
-        final String fileName = "magic.txt";
-        readMagicItemsFromFile(fileName, lm1);
-
-        // Display the list of items.
-        System.out.println(lm1.toString());
-
-        // Ask player for an item.
-        Scanner inputReader = new Scanner(System.in);
-        System.out.print("What item would you like? ");
-        String targetItem = new String();
-        targetItem = inputReader.nextLine();
-        System.out.println();
-
-        ListItem li = new ListItem();
-        li = sequentialSearch(lm1, targetItem);
-        if (li != null) {
-            System.out.println(li.toString());
-        }
-    }
-
     //
     // Private
     //
-    private static ListItem sequentialSearch(ListMan lm,String target) {
+    private static ListItem binarySearchArray(ListItem[] items, String target) {
+        ListItem retVal = null;
+        System.out.println("Binary Searching for " + target + ".");
+        ListItem currentItem = new ListItem();
+        boolean isFound = false;
+        int counter = 0;
+        int low  = 0;
+        int high = items.length-1; // because 0-based arrays
+        while ( (!isFound) && (low <= high)) {
+            int mid = Math.round((high + low) / 2);
+            currentItem = items[mid];
+            if (currentItem.getName().equalsIgnoreCase(target)) {
+                // We found it!
+                isFound = true;
+                retVal = currentItem;
+            } else {
+                // Keep looking.
+                counter++;
+                if (currentItem.getName().compareToIgnoreCase(target) > 0) {
+                    // target is higher in the list than the currentItem (at mid)
+                    high = mid - 1;
+                } else {
+                    // target is lower in the list than the currentItem (at mid)
+                    low = mid + 1;
+                }
+            }
+        }
+        if (isFound) {
+            System.out.println("Found " + target + " after " + counter + " comparisons.");
+        } else {
+            System.out.println("Could not find " + target + " in " + counter + " comparisons.");
+        }
+        return retVal;
+    }
+
+    private static ListItem sequentialSearchList(ListMan lm,
+                                                 String target) {
         ListItem retVal = null;
         System.out.println("Searching for " + target + ".");
         int counter = 0;
@@ -78,16 +61,15 @@ public class ListTester {
         }
         if (isFound) {
             System.out.println("Found " + target + " after " + counter + " comparisons.");
-            return  currentItem;
         } else {
             System.out.println("Could not find " + target + " in " + counter + " comparisons.");
         }
-
         return retVal;
     }
 
 
-    private static void readMagicItemsFromFile(String fileName,ListMan lm) {
+    private static void readMagicItemsFromFileToList(String fileName,
+                                                     ListMan lm) {
         File myFile = new File(fileName);
         try {
             Scanner input = new Scanner(myFile);
@@ -109,5 +91,51 @@ public class ListTester {
         } catch (FileNotFoundException ex) {
             System.out.println("File not found. " + ex.toString());
         }
+
     }
+
+    private static void readMagicItemsFromFileToArray(String fileName,
+                                                      ListItem[] items) {
+        File myFile = new File(fileName);
+        try {
+            int itemCount = 0;
+            Scanner input = new Scanner(myFile);
+
+            while (input.hasNext() && itemCount < items.length) {
+                // Read a line from the file.
+                String itemName = input.nextLine();
+
+                // Construct a new list item and set its attributes.
+                ListItem fileItem = new ListItem();
+                fileItem.setName(itemName);
+                fileItem.setCost((int) (Math.random() * 100));
+                fileItem.setNext(null); // Still redundant. Still safe.
+
+                // Add the newly constructed item to the array.
+                items[itemCount] = fileItem;
+                itemCount = itemCount + 1;
+            }
+            // Close the file.
+            input.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("File not found. " + ex.toString());
+        }
+    }
+
+    private static void selectionSort(ListItem[] items) {
+        for (int pass = 0; pass < items.length-1; pass++) {
+            // System.out.println(pass + "-" + items[pass]);
+            int indexOfTarget = pass;
+            int indexOfSmallest = indexOfTarget;
+            for (int j = indexOfTarget+1; j < items.length; j++) {
+                if (items[j].getName().compareToIgnoreCase(items[indexOfSmallest].getName()) < 0) {
+                    indexOfSmallest = j;
+                }
+            }
+            ListItem temp = items[indexOfTarget];
+            items[indexOfTarget] = items[indexOfSmallest];
+            items[indexOfSmallest] = temp;
+        }
+    }
+
 }
